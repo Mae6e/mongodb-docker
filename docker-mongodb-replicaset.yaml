@@ -1,36 +1,4 @@
 
-------------docker-compose file + without replicaset------------------------------------------------------------------------------------------------------------------
-version: '3'
-
-services:
-  mongodb:
-    container_name: mongodb
-    image: mongo:latest
-    restart: always
-    ports:
-      - 27017:27017
-    volumes:
-      - ./data:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=123123
-      - MONGO_INITDB_DATABASE=TestDBD8
-    networks:
-      - mongo-network
-
-networks:   
-  mongo-network:
-
-------------restore my db-----------------------------------------------------------------------------------------------------------------------------------------
-
-mongorestore --gzip --archive=C:\Users\maede\Downloads\TestDBD8_2023-06-05T13-18-26.gz -h 111.111.111.11 --port=27017 -p 123123 -u root --authenticationDatabase admin
-
-------------mongodb connection string-------------------------------------------------------------------------------------------------------------------------------
-
-mongodb://root:123123@111.111.111.11:27017/?authMechanism=DEFAULT&authSource=admin
-
-------------docker-compose file + with replicaset----------------------------------------------------------------------------------------------------------------------
-
 version: '3'
 volumes:
   mongo-keys:
@@ -117,14 +85,3 @@ services:
 
 networks:  
   mongo-network:
-
-------------or execute command after up containers------------------------------------------------------------------------------------------------------------------
-
-docker-compose up -d
-docker ps -a
-
-docker-compose exec mongodb mongosh -u "root" -p "123123"
-rs.initiate({"_id" : "rs0","members" : [{"_id" : 0,"host" : "111.111.111.11:27017" , "priority" : 2 },{"_id" : 1,"host" : "111.111.111.11:27018"}]});
-
-------------mongodb connection string----------------------------------------------------------------------------------------------------------------------------
-mongodb://root:123123@111.111.111.11:27017,111.111.111.11:27018/?authMechanism=DEFAULT&authSource=admin&replicaSet=rs0
